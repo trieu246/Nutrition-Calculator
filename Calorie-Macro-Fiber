@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition Calculator: Calories, Macros, and Fiber</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        h2 {
+            text-align: center;
+            font-size: 18px;
+            margin-top: -10px;
+            margin-bottom: 20px;
+        }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        .input-container label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-container input, .input-container select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .activity-level, .exercise-level {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .activity-level:hover, .exercise-level:hover, .selected {
+            border-color: #333;
+            background-color: #e0e0e0;
+        }
+        .calculate-button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .calculate-button:hover {
+            background-color: #555;
+        }
+        .subtitle {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Nutrition Calculator:</h1>
+        <h2>Calories, Macros, and Fiber</h2>
+
+        <!-- User Inputs -->
+        <div class="input-container">
+            <label for="ageInput">Age</label>
+            <input type="number" id="ageInput" min="18" max="100" placeholder="Enter your age">
+        </div>
+        <div class="input-container">
+            <label for="weightInput">Weight (lbs)</label>
+            <input type="number" id="weightInput" min="50" max="500" placeholder="Enter your weight in pounds">
+        </div>
+        <div class="input-container">
+            <label for="heightInput">Height</label>
+            <div style="display: flex;">
+                <input type="number" id="heightFeet" min="3" max="8" placeholder="ft" style="width: 50%; margin-right: 5px;">
+                <input type="number" id="heightInches" min="0" max="11" placeholder="in" style="width: 50%;">
+            </div>
+        </div>
+        <div class="input-container">
+            <label for="genderSelect">Gender</label>
+            <select id="genderSelect">
+                <option value="male" selected>Male</option>
+                <option value="female">Female</option>
+            </select>
+        </div>
+
+        <!-- Step Average (Weekly) -->
+        <div class="subtitle">Step Average (Weekly)</div>
+        <div class="activity-level" onclick="selectStepLevel('sedentary')">
+            <h3>Sedentary</h3>
+            <p>Less than 3,000 steps per day on average</p>
+        </div>
+        <div class="activity-level" onclick="selectStepLevel('lightlyActiveLow')">
+            <h3>Lightly Active (Low)</h3>
+            <p>3,000-5,000 steps per day on average</p>
+        </div>
+        <div class="activity-level" onclick="selectStepLevel('lightlyActiveHigh')">
+            <h3>Lightly Active (High)</h3>
+            <p>5,001-7,500 steps per day on average</p>
+        </div>
+        <div class="activity-level" onclick="selectStepLevel('moderatelyActiveLow')">
+            <h3>Moderately Active (Low)</h3>
+            <p>7,501-10,000 steps per day on average</p>
+        </div>
+        <div class="activity-level" onclick="selectStepLevel('moderatelyActiveHigh')">
+            <h3>Moderately Active (High)</h3>
+            <p>10,001-12,500 steps per day on average</p>
+        </div>
+        <div class="activity-level" onclick="selectStepLevel('veryActiveLow')">
+            <h3>Very Active (Low)</h3>
+            <p>12,501-15,000 steps per day on average</p>
+        </div>
+        <div class="activity-level" onclick="selectStepLevel('veryActiveHigh')">
+            <h3>Very Active (High)</h3>
+            <p>15,001-17,500 steps per day on average</p>
+        </div>
+        <div class="activity-level" onclick="selectStepLevel('extremelyActiveLow')">
+            <h3>Extremely Active (Low)</h3>
+            <p>17,501-20,000 steps per day on average</p>
+        </div>
+        <div class="activity-level" onclick="selectStepLevel('extremelyActiveHigh')">
+            <h3>Extremely Active (High)</h3>
+            <p>20,001+ steps per day on average</p>
+        </div>
+
+        <!-- Exercise Sessions (Weekly) -->
+        <div class="subtitle">Exercise Sessions (Weekly)</div>
+        <div class="exercise-level" onclick="selectExerciseLevel('0-2')">
+            <h3>0-2 times per week</h3>
+        </div>
+        <div class="exercise-level" onclick="selectExerciseLevel('2-3')">
+            <h3>2-3 times per week</h3>
+        </div>
+        <div class="exercise-level" onclick="selectExerciseLevel('3-4')">
+            <h3>3-4 times per week</h3>
+        </div>
+        <div class="exercise-level" onclick="selectExerciseLevel('4-5')">
+            <h3>4-5 times per week</h3>
+        </div>
+        <div class="exercise-level" onclick="selectExerciseLevel('6+')">
+            <h3>6+ times per week</h3>
+        </div>
+
+        <!-- Calculate Button -->
+        <button class="calculate-button" onclick="calculateMacros()">Calculate</button>
+
+        <!-- Modal for Results and Explanation -->
+        <div id="resultsModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <div id="resultsContent"></div>
+            </div>
+        </div>
+
+        <!-- Credit and CTA -->
+        <div style="margin-top: 20px; text-align: center;">
+            <p>Calculator by <a href="https://www.calvintrieu.co" target="_blank" style="color: #333; text-decoration: none; font-weight: bold;">Calvin Trieu</a></p>
+            <p>For more tools and resources, visit my website.</p>
+        </div>
+    </div>
+
+    <script>
+        let selectedStepLevel = '';
+        let selectedExerciseLevel = '';
+
+        function selectStepLevel(level) {
+            selectedStepLevel = level;
+            const stepLevels = document.querySelectorAll('.activity-level');
+            stepLevels.forEach(level => level.classList.remove('selected'));
+            document.querySelector(`[onclick="selectStepLevel('${selectedStepLevel}')"]`).classList.add('selected');
+        }
+
+        function selectExerciseLevel(level) {
+            selectedExerciseLevel = level;
+            const exerciseLevels = document.querySelectorAll('.exercise-level');
+            exerciseLevels.forEach(level => level.classList.remove('selected'));
+            document.querySelector(`[onclick="selectExerciseLevel('${selectedExerciseLevel}')"]`).classList.add('selected');
+        }
+
+        function calculateMacros() {
+            if (!selectedStepLevel || !selectedExerciseLevel) {
+                alert("Please select both a step average and exercise session level.");
+                return;
+            }
+
+            // Retrieve user inputs
+            const age = parseInt(document.getElementById('ageInput').value);
+            const weight = parseFloat(document.getElementById('weightInput').value);
+            const heightFeet = parseInt(document.getElementById('heightFeet').value);
+            const heightInches = parseInt(document.getElementById('heightInches').value);
+            const gender = document.getElementById('genderSelect').value;
+
+            // Check for valid input
+            if (isNaN(age) || isNaN(weight) || isNaN(heightFeet) || isNaN(heightInches)) {
+                alert("Please fill out all fields.");
+                return;
+            }
+
+            // Convert height to inches and then to cm for BMR calculation
+            const heightInCm = ((heightFeet * 12) + heightInches) * 2.54;
+
+            // Calculate BMR using Mifflin-St Jeor equation
+            let bmr;
+            if (gender === 'male') {
+                bmr = 10 * (weight / 2.205) + 6.25 * heightInCm - 5 * age + 5;
+            } else {
+                bmr = 10 * (weight / 2.205) + 6.25 * heightInCm - 5 * age - 161;
+            }
+
+            // Calculate TDEE based on PAL factor
+            let pal = calculatePAL(selectedStepLevel, selectedExerciseLevel);
+            let calories = bmr * pal;
+
+            // Calculate protein, fats, carbs, and fiber
+            let proteinIntake = weight; // 1g protein per pound of body weight
+            let fatIntake = (calories * 0.3) / 9; // 30% of total daily calories
+            let carbIntake = (calories - (proteinIntake * 4 + fatIntake * 9)) / 4; // Remaining calories for carbs
+            let fiberIntake = (calories / 1000) * 12.5; // 12.5g of fiber per 1000 kcals
+
+            // Create results content
+            let resultsContent = `
+                <h3>Results</h3>
+                <p><strong>Calories:</strong> ${Math.round(calories)} kcal</p>
+                <p><strong>Protein:</strong> ${Math.round(proteinIntake)} grams</p>
+                <p><strong>Fats:</strong> ${Math.round(fatIntake)} grams</p>
+                <p><strong>Carbs:</strong> ${Math.round(carbIntake)} grams</p>
+                <p><strong>Fiber:</strong> ${Math.round(fiberIntake)} grams</p>
+                <h3>How We Calculated Your Results</h3>
+                <p>We used the <strong>Mifflin-St Jeor equation</strong> to estimate your Basal Metabolic Rate (BMR), which represents the number of calories your body needs at rest.</p>
+                <p>This estimate was then combined with your weekly step average (NEAT = Non-Exercise Activity Thermogenesis) and your Exercise Activity Thermogenesis (EAT) to calculate your <strong>Total Daily Energy Expenditure (TDEE)</strong>.</p>
+                <p>TDEE is an estimate of the total number of calories your body requires daily to support all physiological functions, energy levels, mood, daily activities, and exercise sessions.</p>
+                <h3>Macronutrient Breakdown</h3>
+                <p><strong>Protein:</strong> We set protein at 1 gram per pound of body weight. This is a moderate amount within the recommended range (0.7-1.4 grams per pound) and is chosen to support overall health, the preservation of lean muscle mass, connective tissues (like ligaments and tendons), and recovery.</p>
+                <p><strong>Fats:</strong> Fats were set at 30% of your total daily calories. This is a balanced choice within the recommended range of 25-35% and helps maintain energy levels and supports essential hormonal functions.</p>
+                <p><strong>Carbohydrates:</strong> After accounting for protein and fats, the remaining calories were allocated to carbohydrates. Carbohydrates are crucial for providing energy to support your daily activities and overall health.</p>
+                <p><strong>Fiber:</strong> Fiber intake was calculated at 12.5 grams per 1,000 kcal, a moderate value within the recommended range of 10-15 grams per 1,000 kcal. This helps with satiety, digestive health, and cardiovascular health.</p>
+                <h3>Why We Chose These Values</h3>
+                <p>We selected these mid-range values to promote a balanced diet that supports overall health and energy.</p>
+                <p>It's important to remember that all scientific nutrition equations provide estimates, and your daily caloric needs can fluctuate based on various factors.</p>
+                <p>These values are starting points—you can adjust them based on your specific goals and preferences. Experiment with them to find what works best for you!</p>
+                <h3>Adjusting to Your New Intake</h3>
+                <p>If you're not accustomed to these macronutrient or fiber ratios, allow yourself some time to adjust. Higher protein and fiber intake can make you feel fuller faster, so gradually incorporating these changes will help your body adapt.</p>
+                <h3>References</h3>
+                <ul>
+                    <li><a href="https://pubmed.ncbi.nlm.nih.gov/28642676/" target="_blank">PMID: 28642676</a></li>
+                    <li><a href="https://pubmed.ncbi.nlm.nih.gov/29173121/" target="_blank">PMID: 29173121</a></li>
+                    <li><a href="https://pubmed.ncbi.nlm.nih.gov/15883556/" target="_blank">PMID: 15883556</a></li>
+                    <li><a href="https://pubmed.ncbi.nlm.nih.gov/33096647/" target="_blank">PMID: 33096647</a></li>
+                </ul>
+            `;
+
+            // Display results in modal
+            document.getElementById('resultsContent').innerHTML = resultsContent;
+            document.getElementById('resultsModal').style.display = 'block';
+        }
+
+        function calculatePAL(stepLevel, exerciseLevel) {
+            let palFactor;
+
+            // Determine PAL factor based on step level
+            switch (stepLevel) {
+                case 'sedentary':
+                    palFactor = 1.2;
+                    break;
+                case 'lightlyActiveLow':
+                    palFactor = 1.3;
+                    break;
+                case 'lightlyActiveHigh':
+                    palFactor = 1.4;
+                    break;
+                case 'moderatelyActiveLow':
+                    palFactor = 1.5;
+                    break;
+                case 'moderatelyActiveHigh':
+                    palFactor = 1.6;
+                    break;
+                case 'veryActiveLow':
+                    palFactor = 1.7;
+                    break;
+                case 'veryActiveHigh':
+                    palFactor = 1.8;
+                    break;
+                case 'extremelyActiveLow':
+                    palFactor = 1.9;
+                    break;
+                case 'extremelyActiveHigh':
+                    palFactor = 2.0;
+                    break;
+                default:
+                    palFactor = 1.0; // Default
+            }
+
+            // Adjust PAL based on exercise sessions
+            switch (exerciseLevel) {
+                case '0-2':
+                    palFactor += 0; // No additional adjustment
+                    break;
+                case '2-3':
+                    palFactor += 0.1;
+                    break;
+                case '3-4':
+                    palFactor += 0.2;
+                    break;
+                case '4-5':
+                    palFactor += 0.3;
+                    break;
+                case '6+':
+                    palFactor += 0.4;
+                    break;
+                default:
+                    palFactor += 0; // Default
+            }
+
+            return palFactor;
+        }
+
+        function closeModal() {
+            document.getElementById('resultsModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
+ 
