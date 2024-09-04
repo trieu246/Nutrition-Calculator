@@ -39,10 +39,19 @@
             margin-bottom: 5px;
         }
         .input-container input, .input-container select {
-            width: 100%;
+            width: calc(100% - 20px); /* Adjusted width for alignment */
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #ddd;
+            margin: 0 auto; /* Centers the input fields */
+            display: block;
+        }
+        .input-container .height-inputs {
+            display: flex;
+            gap: 10px; /* Space between height inputs */
+        }
+        .input-container .height-inputs input {
+            width: calc(50% - 5px); /* Ensure height fields align within the same width */
         }
         .activity-level, .exercise-level {
             margin-bottom: 10px;
@@ -58,7 +67,7 @@
             background-color: #e0e0e0;
         }
         .calculate-button {
-            width: 100%;
+            width: calc(100% - 20px); /* Adjusted width for consistency */
             padding: 15px;
             border: none;
             border-radius: 5px;
@@ -67,6 +76,8 @@
             font-weight: bold;
             font-size: 16px;
             cursor: pointer;
+            display: block;
+            margin: 0 auto; /* Centers the button */
         }
         .calculate-button:hover {
             background-color: #555;
@@ -126,9 +137,9 @@
         </div>
         <div class="input-container">
             <label for="heightInput">Height</label>
-            <div style="display: flex;">
-                <input type="number" id="heightFeet" min="3" max="8" placeholder="ft" style="width: 50%; margin-right: 5px;">
-                <input type="number" id="heightInches" min="0" max="11" placeholder="in" style="width: 50%;">
+            <div class="height-inputs">
+                <input type="number" id="heightFeet" min="3" max="8" placeholder="ft">
+                <input type="number" id="heightInches" min="0" max="11" placeholder="in">
             </div>
         </div>
         <div class="input-container">
@@ -375,4 +386,3 @@
     </script>
 </body>
 </html>
- 
